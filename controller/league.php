@@ -5,30 +5,15 @@
     <table>
         <tr>
             <th>Name</th>
-            <th>Delete</th>
-            <th>Remove Players</th>
+            <th>Played</th>
+            <th>Points</th>
         </tr>
         <?php foreach ($teams as $team) : ?>
         <tr>
             <td><?php echo $team['teamName']; ?></td>
-            <td>
-                <form id="delete_player_form"
-                      action="index.php" method="post">
-                    <input type="hidden" name="action" value="delete_team">
-                    <input type="hidden" name="team_id"
-                           value="<?php echo $team['teamID']; ?>">
-                    <input type="submit" value="Delete">
-                    
-                </form>
-            </td>
-            <td>
-                <form id="clearTeam" action="index.php" method="post">
-                <input type="hidden" name="action" value="clearTeam">
-                  <input type="hidden" name="team_id"
-                           value="<?php echo $team['teamID']; ?>">
-                 <input type="submit" value="Clear Team">
-                </form>
-            </td>
+            <td><?php echo $team['played']; ?></td>
+            <td><?php echo $team['points']; ?></td>
+            
         </tr>
         <?php endforeach; ?>
     </table>
