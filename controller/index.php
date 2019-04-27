@@ -95,7 +95,10 @@ if ($action == 'list_players') {
         add_player($team_id, $position, $name);
         header("Location: .?team_id=$team_id");
     }
-} else if ($action == 'list_teams') {
+} else if ($action == 'league_table') {
+    $teams = get_teamsPlace();
+    include('league.php');
+}else if ($action == 'list_teams') {
     $teams = get_teams();
     include('team_list.php');
 } else if ($action == 'add_team') {
