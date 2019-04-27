@@ -40,4 +40,15 @@ function delete_team($team_id) {
     $statement->execute();
     $statement->closeCursor();
 }
+
+function get_teamsPlace() {
+    global $db;
+    $query = 'SELECT teamName, played, points FROM league, teams 
+              WHERE teams.teamID = league.teamID
+              ORDER BY points Desc';
+    $statement = $db->prepare($query);
+    $statement->execute();
+    return $statement;
+}
+
 ?>
