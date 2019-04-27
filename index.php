@@ -1,9 +1,8 @@
 <?php include 'view/header.php'; ?>
 <link href="main.css" rel="stylesheet" type="text/css"/>
 <main>
-    <h1>Menu</h1>
+    <h1>test</h1>
     <p>Welcome to my website. It is a site that helps track registered players across 5 a side teams who then compete in tournaments</p>
-    <p>Made some switches to test git</p>
     <h3>Useful Site Links</h3>
     <ul>
         <li>

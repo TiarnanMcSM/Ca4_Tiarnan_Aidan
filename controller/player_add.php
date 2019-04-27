@@ -4,7 +4,7 @@
     <form action="index.php" method="post" id="add_player_form">
         <input type="hidden" name="action" value="add_player">
 
-        <label>Category:</label>
+        <label>Team:</label>
         <select name="team_id">
         <?php foreach ( $teams as $team ) : ?>
             <option value="<?php echo $team['teamID']; ?>">
