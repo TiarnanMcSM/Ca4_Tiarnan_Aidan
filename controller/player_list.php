@@ -46,6 +46,7 @@
         </table>
         <p><a href="?action=show_add_form">Add Player</a></p>
         <p><a href="?action=list_teams">List Teams</a></p>
+        <p><a href="?action=league_table">League Table</a>
     </section>
 
 </main>

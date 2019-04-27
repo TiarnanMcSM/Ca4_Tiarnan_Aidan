@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-function get_teams() {
+function get_teamsPlace() {
     global $db;
     $query = 'SELECT * FROM league
               ORDER BY points';

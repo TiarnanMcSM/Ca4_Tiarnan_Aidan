@@ -16,19 +16,11 @@
             
         </tr>
         <?php endforeach; ?>
+        
     </table>
     <br />
 
-    <h2>Add Team</h2>
-    <form id="add_team_form"
-          action="index.php" method="post">
-        <input type="hidden" name="action" value="add_team">
-
-        <label>Name:</label>
-        <input type="input" name="name">
-        <input type="submit" value="Add">
-    </form>
-
+    
     <p><a href="index.php?action=list_players">List Players</a></p>
 
 </main>
