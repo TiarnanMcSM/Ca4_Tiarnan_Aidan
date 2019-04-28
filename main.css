@@ -116,3 +116,10 @@ form {
 #add_player_form input[text] {
     width: 15em;
 }
+.signupsuccess {
+  padding-top: 14px;
+  font-family: arial;
+  font-size: 16px;
+  color: green;
+  text-align: center;
+}
