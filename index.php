@@ -1,138 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
+<?php
+require('../model/database.php');
+require('../model/player_db.php');
+require('../model/team_db.php');
 
-<head>
+$action = filter_input(INPUT_POST, 'action');
+if ($action == NULL) {
+    $action = filter_input(INPUT_GET, 'action');
+    if ($action == NULL) {
+        $action = 'list_players';
+    }
+}
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+if ($action == 'list_players') {
+    // Get the current team ID
+    $team_id = filter_input(INPUT_GET, 'team_id', 
+            FILTER_VALIDATE_INT);
+    if ($team_id == NULL || $team_id == FALSE) {
+        $team_id = 1;
+    }
+    
+    // Get player and team data
+    $team_name = get_team_name($team_id);
+    $teams = get_teams();
+    $players = get_players_by_team($team_id);
 
-  <title>Heroic Features - Start Bootstrap Template</title>
+    // Display the player list
+    include('player_list.php');
+} else if ($action == 'show_edit_form') {
+    $player_id = filter_input(INPUT_POST, 'player_id', 
+            FILTER_VALIDATE_INT);
+    if ($player_id == NULL || $player_id == FALSE) {
+        $error = "Missing or incorrect player id. This player could not be found";
+        include('../errors/error.php');
+    } else { 
+        $player = get_player($player_id);
+        include('player_edit.php');
+    }
+} else if ($action == 'update_player') {
+    $player_id = filter_input(INPUT_POST, 'player_id', 
+            FILTER_VALIDATE_INT);
+    $team_id = filter_input(INPUT_POST, 'team_id', 
+            FILTER_VALIDATE_INT);
+    $position = filter_input(INPUT_POST, 'Position');
+    $name = filter_input(INPUT_POST, 'name');
+   
 
-  <!-- Bootstrap core CSS -->
-  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    // Validate the inputs
+    if ($player_id == NULL || $player_id == FALSE) {
+        $error = "Invalid player data. Check player id field and try again.";
+        include('../errors/error.php');
+    }else if($team_id == NULL || $team_id == FALSE){
+        $error = "Invalid player data. Check team field and try again. ";
+        include('../errors/error.php');
+    }else if($position == NULL){
+        $error = "Invalid player data. Check position field and try again.";
+        include('../errors/error.php');
+    }else if($name == NULL){
+        $error = "Invalid player data. Check Name field and try again.";
+        include('../errors/error.php');
+    }else {
+        update_player($player_id, $team_id, $position, $name);
 
-  <!-- Custom styles for this template -->
-  <link href="css/heroic-features.css" rel="stylesheet">
+        // Display the Player List page for the current team
+        header("Location: .?team_id=$team_id");
+    }
+} else if ($action == 'delete_player') {
+    $player_id = filter_input(INPUT_POST, 'player_id', 
+            FILTER_VALIDATE_INT);
+    $team_id = filter_input(INPUT_POST, 'team_id', 
+            FILTER_VALIDATE_INT);
+    if ($player_id == NULL || $player_id == FALSE) {
+        $error = "Missing or incorrect player id";
+        include('../errors/error.php');
+    }else if($team_id == NULL || $team_id == FALSE){
+        $error = "Invalid player data. Check team field and try again. ";
+        include('../errors/error.php');
+    } else { 
+        delete_player($player_id);
+        header("Location: .?team_id=$team_id");
+    }
+} else if ($action == 'show_add_form') {
+    $teams = get_teams();
+    include('player_add.php');
+} else if ($action == 'add_player') {
+    $team_id = filter_input(INPUT_POST, 'team_id', 
+            FILTER_VALIDATE_INT);
+    $position = filter_input(INPUT_POST, 'position');
+    $name = filter_input(INPUT_POST, 'name');
+    if ($team_id == NULL || $team_id == FALSE || $position == NULL || 
+            $name == NULL) {
+        $error = "Invalid player data. Check all fields and try again.";
+        include('../errors/error.php');
+    } else { 
+        add_player($team_id, $position, $name);
+        header("Location: .?team_id=$team_id");
+    }
+} else if ($action == 'league_table') {
+    $teams = get_teamsPlace();
+    include('league.php');
+}else if ($action == 'list_teams') {
+    $teams = get_teams();
+    include('team_list.php');
+} else if ($action == 'add_team') {
+    $name = filter_input(INPUT_POST, 'name');
 
-</head>
+    // Validate inputs
+    if ($name == NULL) {
+        $error = "Invalid team name. Check name and try again.";
+        include('../errors/error.php');
+    } else {
+        add_team($name);
+        header('Location: .?action=list_teams');  // display the Category List page
+    }
+} else if ($action == 'delete_team') {
+    $team_id = filter_input(INPUT_POST, 'team_id', 
+            FILTER_VALIDATE_INT);
+    delete_playerForTeam($team_id);
+    delete_team($team_id);
+    header('Location: .?action=list_teams');      // display the Category List page
+    
+    
+}else if($action == 'clearTeam'){
+    $team_id = filter_input(INPUT_POST, 'team_id', 
+            FILTER_VALIDATE_INT);
+    delete_playerForTeam($team_id);
+    header('Location: .?action=list_teams');
+}
 
-<body>
-
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
-      <a class="navbar-brand" href="#">5 A Side</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="controller/index.php">Play Manager</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Page Content -->
-  <div class="container">
-
-    <!-- Jumbotron Header -->
-    <header class="jumbotron my-4">
-      <h1 class="display-4">Welcome to the Irish 5 A side league</h1>
-      <p>Welcome to the site below are a few useful links for navigating around the site</p>
-    <h3>Useful Site Links</h3>
-    <ul>
-        <li>
-            <a href="controller">Player Manager</a>
-        </li>
-        <li>
-            <a href="controller/index.php?action=league_table">League Table</a>
-        </li>
-    </ul>
-    </header>
-
-    <!-- Page Features -->
-    <div class="row text-center">
-
-      <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card h-100">
-          <img class="card-img-top" src="images/DundalkCrest.jpg" alt="">
-          <div class="card-body">
-            <h4 class="card-title">Dundalk</h4>
-            <p class="card-text">Dundalk FC 5 A side team</p>
-          </div>
-          <div class="card-footer">
-            <a href="controller/index.php?team_id=7" class="btn btn-success">Check out the team!</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card h-100">
-          <img class="card-img-top" src="images/Rovers.png" alt="">
-          <div class="card-body">
-            <h4 class="card-title">Shamrock Rovers</h4>
-            <p class="card-text">Shamrock Rovers 5 A side team</p>
-          </div>
-          <div class="card-footer">
-            <a href="controller/index.php?team_id=13" class="btn btn-success">Check out the team!</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card h-100">
-          <img class="card-img-top" src="images/Cork-City-Football-Crest-2011.png"  alt="">
-          <div class="card-body">
-            <h4 class="card-title">Cork City</h4>
-            <p class="card-text">Cork City 5 A side team</p>
-          </div>
-          <div class="card-footer">
-            <a href="controller/index.php?team_id=14" class="btn btn-success">Check out the team!</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6 mb-4">
-        <div class="card h-100">
-          <img class="card-img-top" src="images/BohsCrest.jpg" alt="">
-          <div class="card-body">
-            <h4 class="card-title">Bohemians</h4>
-            <p class="card-text">Bohemians 5 A side team</p>
-          </div>
-          <div class="card-footer">
-            <a href="controller/index.php?team_id=15" class="btn btn-success">Check out the team!</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <!-- /.row -->
-
-  </div>
-  <!-- /.container -->
-
-  <!-- Footer -->
-  <footer class="py-5 bg-dark">
-    <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; Aidan Vaughan & Tiarnan McShane-Mulrey</p>
-    </div>
-    <!-- /.container -->
-  </footer>
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-</body>
-
-</html>
+?>
