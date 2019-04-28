@@ -1,4 +1,5 @@
 <?php include '../view/header.php'; ?>
+
 <main>
 
     <h1>Team List</h1>

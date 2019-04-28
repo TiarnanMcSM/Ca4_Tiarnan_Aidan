@@ -81,6 +81,8 @@ if(isset($_POST['login'])){
     </head>
     <body>
         <h1>Login</h1>
+        <p>If you have not registered already <a href ="register.php">click here</a></p>
+        
         <form action="login.php" method="post">
             <label for="username">Username</label>
             <input type="text" id="username" name="username"><br>

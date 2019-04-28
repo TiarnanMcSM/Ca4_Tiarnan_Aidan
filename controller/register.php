@@ -121,15 +121,61 @@ if(isset($_POST['register'])){
         <div class="container">
         
         <h1>Register</h1>
+        <p>You will need to register in order to access the Player Manager</p>
         <form action="register.php" method="post">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Username"><br>
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"><br>
+            <input type="password" id="password" name="password" placeholder="Password"><progress max="100" value="0" id="strength" style="width: 230px"></progress><br>
             <input type="submit" name="register" value="Register"></button>
         </form>
         
         </div>
     </body>
+    
+    <script type="text/javascript">
+        var pass = document.getElementById("password")
+        pass.addEventListener('keyup',function(){
+            checkPassword(pass.value)
+        })
+        function checkPassword(password){
+            var strengthBar = document.getElementById("strength")
+            var strength = 0;
+            if(password.match(/[a-zA-Z0-9][a-zA-Z0-9]+/)){
+                strength +=1
+            }
+            if(password.match(/[~<>?]+/)){
+                strength +=1
+            }
+            if(password.match(/[!@£$%^&*()]+/)){
+                strength+=1
+            }
+            if(password.length > 5 ){
+                strength +=1
+            }
+            switch(strength){
+                case 0:
+                        strengthBar.value =20;
+                        break
+                        
+                case 1:
+                        strengthBar.value = 40;
+                        break
+                        
+                case 2:
+                        strengthBar.value = 60;
+                        break
+                        
+                case 3: 
+                        strengthBar.value = 80;
+                        break
+                        
+                case 4:
+                        strengthBar.value = 100;
+                        break
+            }
+            
+        }
+        </script>
 </html>
 <?php include '../view/footer.php'; ?>
